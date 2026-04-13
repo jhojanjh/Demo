@@ -339,7 +339,7 @@ nav{position:fixed;top:0;left:0;right:0;height:64px;display:flex;align-items:cen
   /* ── ADMIN: sin sidebar, tabs abajo ── */
   .admin-wrap{grid-template-columns:1fr}
   .admin-sidebar{display:none}
-  .admin-bottom-bar{display:flex !important}
+  .admin-bottom-bar.visible{display:flex !important}
   .admin-main{padding:18px 14px 88px} /* espacio para barra inferior */
   .admin-header{flex-direction:column;align-items:flex-start;gap:10px;margin-bottom:18px}
   .admin-title{font-size:24px}
@@ -389,7 +389,8 @@ nav{position:fixed;top:0;left:0;right:0;height:64px;display:flex;align-items:cen
 .mobile-menu-item:hover,.mobile-menu-item.active{color:var(--gold);background:rgba(201,169,110,0.04);border-left-color:var(--gold)}
 
 /* Admin bottom bar (mobile) */
-.admin-bottom-bar{display:none;position:fixed;bottom:0;left:0;right:0;background:rgba(8,8,8,0.97);border-top:1px solid var(--border);z-index:150;backdrop-filter:blur(12px)}
+.admin-bottom-bar{display:none !important;position:fixed;bottom:0;left:0;right:0;background:rgba(8,8,8,0.97);border-top:1px solid var(--border);z-index:150;backdrop-filter:blur(12px)}
+.admin-bottom-bar.visible{display:flex !important}
 .admin-bottom-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 4px;cursor:pointer;transition:color .2s;color:var(--muted);font-size:9px;letter-spacing:1px;text-transform:uppercase;border:none;background:none}
 .admin-bottom-item.active,.admin-bottom-item:hover{color:var(--gold)}
 .admin-bottom-icon{font-size:18px}
@@ -1030,7 +1031,11 @@ function adminBottomNav(sec, el) {
 // Show/hide admin bottom bar based on active page
 function updateBottomBar(page) {
   const bar = document.getElementById('admin-bottom-bar')
-  bar.style.display = page === 'admin' ? '' : 'none'
+  if(page === 'admin') {
+    bar.classList.add('visible')
+  } else {
+    bar.classList.remove('visible')
+  }
 }
 
 // ══════════════ INIT ══════════════
