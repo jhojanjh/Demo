@@ -251,81 +251,127 @@ nav{position:fixed;top:0;left:0;right:0;height:64px;display:flex;align-items:cen
    RESPONSIVE — Mobile (≤ 768px)
 ══════════════════════════════════════════ */
 @media(max-width:768px){
-  /* NAV mobile */
-  nav{padding:0 18px;height:56px}
+  /* ── NAV: logo izq, iconos der, hamburguesa al final ── */
+  nav{padding:0 16px;height:56px;gap:8px}
   .nav-tabs{display:none}
-  .btn-login{display:none}
-  .logo{font-size:20px;letter-spacing:5px}
-  .nav-right{gap:10px}
-  .icon-btn{width:34px;height:34px;font-size:15px}
+  .btn-login{display:none} /* reemplazado por ícono 👤 */
+  .icon-login-mobile{display:flex !important}
+  .logo{font-size:19px;letter-spacing:5px}
+  .nav-right{gap:8px}
+  .icon-btn{width:36px;height:36px;font-size:15px}
   .hamburger{display:flex !important}
 
-  /* Pages */
+  /* ── PAGES ── */
   .page{padding-top:56px}
 
-  /* Store hero */
-  .store-hero{padding:28px 18px 20px;flex-direction:column;gap:20px}
-  .store-hero-left h1{font-size:30px}
-  .store-hero-left p{font-size:12px}
-  .store-filters{width:100%;overflow-x:auto;flex-wrap:nowrap;padding-bottom:6px;gap:8px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  /* ── STORE hero: compacto ── */
+  .store-hero{padding:22px 16px 16px;flex-direction:column;align-items:flex-start;gap:16px;border-bottom:1px solid var(--border)}
+  .store-hero-left h1{font-size:28px;line-height:1.1}
+  .store-hero-left p{font-size:12px;margin-top:6px}
+
+  /* ── FILTROS: scroll horizontal limpio ── */
+  .store-filters{
+    width:100%;
+    display:flex;flex-direction:row;flex-wrap:nowrap;
+    overflow-x:auto;-webkit-overflow-scrolling:touch;
+    gap:8px;padding:0 16px 8px;
+    scrollbar-width:none;
+    margin:0 -16px;width:calc(100% + 32px);
+  }
   .store-filters::-webkit-scrollbar{display:none}
-  .search-wrap{flex-shrink:0}
-  .search-input{width:140px;font-size:11px}
-  .filter-chip{white-space:nowrap;padding:7px 14px;font-size:10px}
+  .search-wrap{order:-1;flex-shrink:0}
+  .search-input{width:130px;font-size:11px;padding:8px 12px 8px 32px}
+  .filter-chip{flex-shrink:0;white-space:nowrap;padding:8px 16px;font-size:11px}
 
-  /* Products */
+  /* ── GRILLA productos: 2 col ── */
   .products-grid{grid-template-columns:1fr 1fr;gap:2px;padding:2px}
-  .card-name{font-size:16px}
-  .card-body{padding:12px 14px 16px}
-  .card-footer{flex-direction:column;align-items:flex-start;gap:4px}
-  .card-overlay{display:none}
+  .card-body{padding:11px 12px 14px}
+  .card-cat{font-size:9px}
+  .card-name{font-size:15px}
+  .card-footer{flex-direction:column;align-items:flex-start;gap:3px}
+  .card-rating{font-size:10px}
+  .card-overlay{display:none} /* hover overlay no aplica en touch */
+  .badge-new,.badge-sale{font-size:8px;padding:3px 8px;top:10px;left:10px}
 
-  /* Detail — stack vertically */
-  .detail-wrap{grid-template-columns:1fr;grid-template-rows:auto auto}
-  .detail-gallery{min-height:300px;max-height:52vw}
-  .detail-info{padding:24px 18px 40px;overflow-y:visible}
-  .detail-name{font-size:28px}
-  .detail-price-main{font-size:26px}
-  .detail-desc{font-size:13px}
+  /* ── DETALLE producto: vertical ── */
+  .detail-wrap{display:flex;flex-direction:column}
+  .detail-gallery{min-height:260px;height:62vw;max-height:340px;flex-shrink:0}
+  .detail-garment svg{transform:scale(0.75);transform-origin:center}
+  .detail-info{padding:22px 16px 48px;overflow-y:visible}
+  .detail-breadcrumb{font-size:11px;margin-bottom:14px}
+  .detail-name{font-size:26px;margin-bottom:8px}
+  .detail-price-main{font-size:24px}
+  .detail-price{margin-bottom:18px;padding-bottom:18px}
+  .detail-desc{font-size:13px;margin-bottom:18px}
+  .detail-section-label{margin-bottom:10px}
+  .size-grid{gap:6px;margin-bottom:18px}
+  .size-btn{width:42px;height:42px;font-size:11px}
+  .color-grid{margin-bottom:18px}
+  .qty-wrap{margin-bottom:18px}
   .gallery-thumbs{display:none}
 
-  /* Cart sidebar — full width */
+  /* ── CARRITO: pantalla completa ── */
   .cart-sidebar{width:100%;right:-100%}
-  .cart-header{padding:20px 20px}
-  .cart-items{padding:16px 20px}
-  .cart-footer{padding:16px 20px}
+  .cart-sidebar.open{right:0}
+  .cart-header{padding:18px 18px;height:56px}
+  .cart-title{font-size:22px}
+  .cart-items{padding:14px 18px;gap:16px}
+  .cart-footer{padding:14px 18px}
+  .cart-item-img{width:60px;height:76px}
+  .cart-item-name{font-size:16px}
+  .coupon-input{font-size:12px}
 
-  /* Login modal — full screen on mobile */
-  .modal{width:100%;max-width:100%;margin:0;padding:36px 24px;border-left:none;border-right:none;border-bottom:none;position:fixed;bottom:0;top:auto;animation:modalUp .35s ease}
+  /* ── LOGIN MODAL: sube desde abajo ── */
+  .modal-overlay{align-items:flex-end;padding:0}
+  .modal{
+    width:100%;max-width:100%;
+    margin:0;padding:32px 20px 40px;
+    border:none;border-top:1px solid var(--border);
+    border-radius:0;
+    position:relative;
+    animation:modalUp .35s cubic-bezier(.4,0,.2,1);
+  }
   @keyframes modalUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
-  .modal-overlay{align-items:flex-end}
+  .modal-logo{font-size:22px;margin-bottom:24px}
+  .modal-tabs{margin-bottom:24px}
+  .form-input{padding:13px 14px;font-size:15px} /* más fácil de tipear en móvil */
 
-  /* Admin — tabs en la parte inferior */
-  .admin-wrap{grid-template-columns:1fr;position:relative}
+  /* ── ADMIN: sin sidebar, tabs abajo ── */
+  .admin-wrap{grid-template-columns:1fr}
   .admin-sidebar{display:none}
   .admin-bottom-bar{display:flex !important}
-  .admin-main{padding:20px 16px 80px}
-  .admin-header{flex-direction:column;align-items:flex-start;gap:12px;margin-bottom:20px}
-  .admin-title{font-size:26px}
-  .stats-grid{grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
-  .stat-card{padding:16px}
-  .stat-value{font-size:26px}
-  .admin-section{overflow-x:auto}
-  .admin-table{min-width:560px}
-  .chart-bar-wrap{overflow-x:auto;padding:16px}
+  .admin-main{padding:18px 14px 88px} /* espacio para barra inferior */
+  .admin-header{flex-direction:column;align-items:flex-start;gap:10px;margin-bottom:18px}
+  .admin-title{font-size:24px}
+  .stats-grid{grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}
+  .stat-card{padding:14px 16px}
+  .stat-value{font-size:24px}
+  .stat-change{font-size:11px}
+  .admin-section{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .admin-section-header{padding:14px 16px}
+  .admin-table{min-width:520px;font-size:12px}
+  .admin-table th{padding:10px 14px;font-size:9px}
+  .admin-table td{padding:12px 14px}
+  .chart-bar-wrap{padding:14px;overflow-x:auto;height:160px}
 
-  /* Toast */
-  .toast{width:90%;text-align:center}
+  /* ── TOAST centrado ── */
+  .toast{width:calc(100% - 32px);left:16px;right:16px;transform:translateX(0) translateY(80px);text-align:center;font-size:13px}
+  .toast.show{transform:translateX(0) translateY(0)}
 }
 
 /* ══════════════════════════════════════════
-   RESPONSIVE — Small mobile (≤ 420px)
+   RESPONSIVE — Muy pequeño (≤ 390px)
 ══════════════════════════════════════════ */
-@media(max-width:420px){
-  .store-hero-left h1{font-size:26px}
-  .products-grid{grid-template-columns:1fr}
-  .detail-gallery{max-height:70vw}
-  .stats-grid{grid-template-columns:1fr}
+@media(max-width:390px){
+  .logo{font-size:17px;letter-spacing:4px}
+  .store-hero-left h1{font-size:24px}
+  .products-grid{grid-template-columns:1fr 1fr}
+  .card-name{font-size:13px}
+  .detail-name{font-size:22px}
+  .stats-grid{grid-template-columns:1fr 1fr}
+  .stat-value{font-size:20px}
+  .admin-bottom-item{font-size:8px;padding:8px 2px}
+  .admin-bottom-icon{font-size:16px}
 }
 
 /* ── HAMBURGER ── */
@@ -334,13 +380,13 @@ nav{position:fixed;top:0;left:0;right:0;height:64px;display:flex;align-items:cen
 .hamburger.open span:nth-child(1){transform:translateY(6.5px) rotate(45deg)}
 .hamburger.open span:nth-child(2){opacity:0}
 .hamburger.open span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg)}
+.icon-login-mobile{display:none} /* solo visible en móvil via media query */
 
 /* Mobile drawer menu */
-.mobile-menu{position:fixed;top:56px;left:0;right:0;background:rgba(8,8,8,0.98);backdrop-filter:blur(16px);z-index:190;border-bottom:1px solid var(--border);padding:20px;display:flex;flex-direction:column;gap:4px;transform:translateY(-110%);transition:transform .35s cubic-bezier(.4,0,.2,1)}
+.mobile-menu{position:fixed;top:56px;left:0;right:0;background:rgba(8,8,8,0.98);backdrop-filter:blur(20px);z-index:190;border-bottom:1px solid var(--border);padding:8px 0 16px;display:flex;flex-direction:column;transform:translateY(-110%);transition:transform .35s cubic-bezier(.4,0,.2,1)}
 .mobile-menu.open{transform:translateY(0)}
-.mobile-menu-item{padding:14px 16px;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);cursor:pointer;border-bottom:1px solid var(--border);transition:color .2s}
-.mobile-menu-item:last-child{border-bottom:none}
-.mobile-menu-item:hover,.mobile-menu-item.active{color:var(--gold)}
+.mobile-menu-item{padding:16px 24px;font-size:13px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);cursor:pointer;display:flex;align-items:center;gap:14px;transition:all .2s;border-left:3px solid transparent}
+.mobile-menu-item:hover,.mobile-menu-item.active{color:var(--gold);background:rgba(201,169,110,0.04);border-left-color:var(--gold)}
 
 /* Admin bottom bar (mobile) */
 .admin-bottom-bar{display:none;position:fixed;bottom:0;left:0;right:0;background:rgba(8,8,8,0.97);border-top:1px solid var(--border);z-index:150;backdrop-filter:blur(12px)}
@@ -373,10 +419,18 @@ nav{position:fixed;top:0;left:0;right:0;height:64px;display:flex;align-items:cen
       🛍
       <span class="badge" id="cart-badge">0</span>
     </button>
-    <button class="icon-btn" title="Favoritos">♡</button>
+    <button class="icon-btn" title="Favoritos" onclick="showToast('Favoritos próximamente ♡')">♡</button>
+    <button class="icon-btn icon-login-mobile" onclick="openLogin()" title="Ingresar">👤</button>
     <button class="btn-login" onclick="openLogin()">Ingresar</button>
+    <button class="hamburger" id="hamburger" onclick="toggleMenu()"><span></span><span></span><span></span></button>
   </div>
 </nav>
+<div class="mobile-menu" id="mobile-menu">
+  <div class="mobile-menu-item active" onclick="mobileNav('store')">🛍 &nbsp;Tienda</div>
+  <div class="mobile-menu-item" onclick="mobileNav('admin')">📊 &nbsp;Panel Admin</div>
+  <div class="mobile-menu-item" onclick="openLogin();toggleMenu()">👤 &nbsp;Ingresar / Registrarse</div>
+  <div class="mobile-menu-item" onclick="openCart();toggleMenu()">🛒 &nbsp;Mi Carrito</div>
+</div>
 
 <!-- ═══════════════ STORE PAGE ═══════════════ -->
 <div class="page active" id="page-store">
@@ -456,6 +510,15 @@ nav{position:fixed;top:0;left:0;right:0;height:64px;display:flex;align-items:cen
   </div>
 </div>
 
+<!-- Admin bottom bar (mobile) -->
+<div class="admin-bottom-bar" id="admin-bottom-bar">
+  <button class="admin-bottom-item active" onclick="adminBottomNav('dashboard',this)"><span class="admin-bottom-icon">📊</span>Dashboard</button>
+  <button class="admin-bottom-item" onclick="adminBottomNav('products',this)"><span class="admin-bottom-icon">👗</span>Productos</button>
+  <button class="admin-bottom-item" onclick="adminBottomNav('orders',this)"><span class="admin-bottom-icon">📦</span>Pedidos</button>
+  <button class="admin-bottom-item" onclick="adminBottomNav('users',this)"><span class="admin-bottom-icon">👤</span>Usuarios</button>
+  <button class="admin-bottom-item" onclick="adminBottomNav('categories',this)"><span class="admin-bottom-icon">🏷</span>Cats.</button>
+</div>
+
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
@@ -528,6 +591,7 @@ function goTo(page) {
     document.querySelectorAll('.nav-tab')[1].classList.add('active')
     renderAdmin('dashboard')
   }
+  updateBottomBar(page)
 }
 
 // ══════════════ STORE ══════════════
@@ -936,9 +1000,43 @@ function showToast(msg) {
   toastTimer = setTimeout(() => t.classList.remove('show'), 3000)
 }
 
+// ══════════════ MOBILE ══════════════
+function toggleMenu() {
+  const h = document.getElementById('hamburger')
+  const m = document.getElementById('mobile-menu')
+  h.classList.toggle('open')
+  m.classList.toggle('open')
+}
+
+function mobileNav(page) {
+  toggleMenu()
+  document.querySelectorAll('.mobile-menu-item').forEach((el,i) => {
+    el.classList.toggle('active', (page==='store'&&i===0)||(page==='admin'&&i===1))
+  })
+  goTo(page)
+}
+
+function adminBottomNav(sec, el) {
+  document.querySelectorAll('.admin-bottom-item').forEach(b => b.classList.remove('active'))
+  el.classList.add('active')
+  // sync sidebar
+  document.querySelectorAll('.admin-nav-item').forEach((item, i) => {
+    const secs = ['dashboard','products','orders','users','categories']
+    item.classList.toggle('active', secs[i] === sec)
+  })
+  renderAdmin(sec)
+}
+
+// Show/hide admin bottom bar based on active page
+function updateBottomBar(page) {
+  const bar = document.getElementById('admin-bottom-bar')
+  bar.style.display = page === 'admin' ? '' : 'none'
+}
+
 // ══════════════ INIT ══════════════
 renderStore()
 renderLoginForm()
+updateBottomBar('store')
 </script>
 </body>
 </html>
