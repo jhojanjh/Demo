@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AURORE — App Completa</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --black:#080808;--cream:#f4efe6;--gold:#c9a96e;--gold2:#e8d5a3;
+  --bg2:#111;--bg3:#191919;--muted:#6b6560;--border:rgba(201,169,110,0.18);
+  --white:#fff;--red:#e05252;--green:#52a87a;
+}
+html{scroll-behavior:smooth}
+body{background:var(--black);color:var(--cream);font-family:'DM Sans',sans-serif;font-weight:300;overflow-x:hidden}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--black)}
+::-webkit-scrollbar-thumb{background:var(--gold);border-radius:2px}
+
+/* ── NAV ── */
+nav{position:fixed;top:0;left:0;right:0;height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 40px;z-index:200;background:rgba(8,8,8,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+.logo{font-family:'Cormorant Garamond',serif;font-size:24px;letter-spacing:7px;color:var(--cream);cursor:pointer;transition:color .3s}
+.logo:hover{color:var(--gold)}
+.nav-tabs{display:flex;gap:4px}
+.nav-tab{background:none;border:none;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;padding:8px 16px;cursor:pointer;transition:all .3s;border-radius:4px}
+.nav-tab:hover,.nav-tab.active{color:var(--cream);background:rgba(255,255,255,0.05)}
+.nav-tab.active{color:var(--gold)}
+.nav-right{display:flex;align-items:center;gap:16px}
+.icon-btn{background:none;border:1px solid var(--border);color:var(--cream);width:38px;height:38px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .3s;position:relative}
+.icon-btn:hover{border-color:var(--gold);color:var(--gold)}
+.badge{position:absolute;top:-4px;right:-4px;background:var(--gold);color:var(--black);font-size:9px;font-weight:500;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.btn-login{background:none;border:1px solid var(--border);color:var(--cream);padding:8px 20px;font-family:'DM Sans',sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all .3s}
+.btn-login:hover{border-color:var(--gold);color:var(--gold)}
+
+/* ── PAGES ── */
+.page{display:none;min-height:100vh;padding-top:64px}
+.page.active{display:block}
+
+/* ── STORE PAGE ── */
+.store-hero{padding:60px 40px 40px;display:flex;justify-content:space-between;align-items:flex-end;border-bottom:1px solid var(--border)}
+.store-hero-left h1{font-family:'Cormorant Garamond',serif;font-size:52px;font-weight:300;line-height:1.05}
+.store-hero-left h1 em{font-style:italic;color:var(--gold)}
+.store-hero-left p{color:var(--muted);font-size:13px;margin-top:10px;letter-spacing:.5px}
+.store-filters{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.filter-chip{background:none;border:1px solid var(--border);color:var(--muted);padding:8px 18px;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:all .3s;font-family:'DM Sans',sans-serif}
+.filter-chip:hover,.filter-chip.active{border-color:var(--gold);color:var(--gold);background:rgba(201,169,110,0.06)}
+.search-wrap{position:relative}
+.search-input{background:rgba(255,255,255,0.03);border:1px solid var(--border);color:var(--cream);padding:8px 16px 8px 36px;font-family:'DM Sans',sans-serif;font-size:12px;width:200px;outline:none;transition:border-color .3s}
+.search-input:focus{border-color:var(--gold)}
+.search-input::placeholder{color:var(--muted)}
+.search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:13px;pointer-events:none}
+
+.products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:2px;padding:2px}
+.product-card{background:var(--bg2);cursor:pointer;transition:transform .4s cubic-bezier(.25,.46,.45,.94);position:relative;overflow:hidden}
+.product-card:hover{transform:translateY(-4px);z-index:2}
+.product-card:hover .card-overlay{opacity:1}
+.card-img{width:100%;aspect-ratio:3/4;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.card-bg{position:absolute;inset:0;transition:transform .6s ease}
+.product-card:hover .card-bg{transform:scale(1.05)}
+.card-garment{position:relative;z-index:1;transition:transform .6s ease}
+.product-card:hover .card-garment{transform:translateY(-8px)}
+.card-overlay{position:absolute;inset:0;background:rgba(8,8,8,0.5);display:flex;align-items:flex-end;justify-content:center;padding:24px;opacity:0;transition:opacity .3s;z-index:3}
+.card-quick-add{background:var(--gold);color:var(--black);border:none;padding:12px 28px;font-family:'DM Sans',sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;font-weight:500;cursor:pointer;transition:background .3s;width:100%}
+.card-quick-add:hover{background:var(--gold2)}
+.card-body{padding:18px 20px 22px}
+.card-cat{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.card-name{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:400;color:var(--cream);line-height:1.2;margin-bottom:4px}
+.card-footer{display:flex;justify-content:space-between;align-items:center;margin-top:10px}
+.card-price{font-size:14px;color:var(--gold);letter-spacing:.5px}
+.card-old{font-size:12px;color:var(--muted);text-decoration:line-through;margin-left:6px}
+.card-rating{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--muted)}
+.stars{color:var(--gold);font-size:10px;letter-spacing:1px}
+.badge-new{position:absolute;top:14px;left:14px;background:var(--gold);color:var(--black);font-size:9px;letter-spacing:2px;text-transform:uppercase;padding:4px 10px;z-index:4;font-weight:500}
+.badge-sale{position:absolute;top:14px;left:14px;background:var(--red);color:#fff;font-size:9px;letter-spacing:2px;text-transform:uppercase;padding:4px 10px;z-index:4;font-weight:500}
+
+/* ── PRODUCT DETAIL ── */
+.detail-wrap{display:grid;grid-template-columns:1fr 1fr;min-height:calc(100vh - 64px)}
+.detail-gallery{background:var(--bg2);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.detail-gallery-bg{position:absolute;inset:0}
+.detail-garment{position:relative;z-index:1}
+.gallery-thumbs{position:absolute;bottom:30px;left:50%;transform:translateX(-50%);display:flex;gap:8px}
+.thumb{width:40px;height:40px;border:1px solid var(--border);background:rgba(255,255,255,0.05);cursor:pointer;transition:border-color .3s;display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--muted)}
+.thumb.active,.thumb:hover{border-color:var(--gold)}
+.detail-info{padding:60px 52px;overflow-y:auto;display:flex;flex-direction:column;gap:0}
+.detail-breadcrumb{font-size:11px;letter-spacing:1px;color:var(--muted);margin-bottom:24px;cursor:pointer}
+.detail-breadcrumb:hover{color:var(--gold)}
+.detail-cat{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:12px}
+.detail-name{font-family:'Cormorant Garamond',serif;font-size:42px;font-weight:300;line-height:1.05;margin-bottom:10px}
+.detail-rating{display:flex;align-items:center;gap:10px;margin-bottom:24px}
+.detail-stars{color:var(--gold);font-size:14px;letter-spacing:2px}
+.detail-reviews{font-size:12px;color:var(--muted)}
+.detail-price{display:flex;align-items:baseline;gap:12px;margin-bottom:30px;padding-bottom:30px;border-bottom:1px solid var(--border)}
+.detail-price-main{font-size:32px;color:var(--gold);font-family:'Cormorant Garamond',serif;font-weight:400}
+.detail-price-old{font-size:18px;color:var(--muted);text-decoration:line-through}
+.detail-desc{font-size:14px;color:var(--muted);line-height:1.8;margin-bottom:30px}
+.detail-section-label{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+.size-grid{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:28px}
+.size-btn{width:48px;height:48px;border:1px solid var(--border);background:none;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:12px;cursor:pointer;transition:all .25s;display:flex;align-items:center;justify-content:center}
+.size-btn:hover:not(.out){border-color:var(--gold);color:var(--gold)}
+.size-btn.selected{border-color:var(--gold);background:var(--gold);color:var(--black)}
+.size-btn.out{opacity:.3;text-decoration:line-through;cursor:not-allowed}
+.color-grid{display:flex;gap:10px;margin-bottom:30px}
+.color-btn{width:28px;height:28px;border-radius:50%;border:2px solid transparent;cursor:pointer;transition:all .25s;position:relative}
+.color-btn.selected{border-color:var(--gold);box-shadow:0 0 0 2px var(--black),0 0 0 4px var(--gold)}
+.qty-wrap{display:flex;align-items:center;gap:0;margin-bottom:24px;border:1px solid var(--border);width:fit-content}
+.qty-btn{background:none;border:none;color:var(--cream);width:44px;height:44px;cursor:pointer;font-size:18px;transition:color .2s;display:flex;align-items:center;justify-content:center}
+.qty-btn:hover{color:var(--gold)}
+.qty-val{width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:15px;border-left:1px solid var(--border);border-right:1px solid var(--border)}
+.btn-add-cart{width:100%;background:var(--gold);border:none;color:var(--black);padding:17px;font-family:'DM Sans',sans-serif;font-size:12px;letter-spacing:2px;text-transform:uppercase;font-weight:500;cursor:pointer;transition:background .3s;margin-bottom:12px}
+.btn-add-cart:hover{background:var(--gold2)}
+.btn-wishlist{width:100%;background:none;border:1px solid var(--border);color:var(--cream);padding:15px;font-family:'DM Sans',sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all .3s}
+.btn-wishlist:hover{border-color:var(--gold);color:var(--gold)}
+.detail-meta{margin-top:28px;padding-top:24px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:10px}
+.detail-meta-row{display:flex;gap:10px;font-size:12px}
+.detail-meta-row span:first-child{color:var(--muted);min-width:90px}
+.detail-meta-row span:last-child{color:var(--cream)}
+
+/* ── CART SIDEBAR ── */
+.cart-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:300;opacity:0;pointer-events:none;transition:opacity .3s;backdrop-filter:blur(4px)}
+.cart-overlay.open{opacity:1;pointer-events:all}
+.cart-sidebar{position:fixed;top:0;right:-460px;width:460px;height:100vh;background:var(--bg2);z-index:301;transition:right .4s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;border-left:1px solid var(--border)}
+.cart-sidebar.open{right:0}
+.cart-header{display:flex;justify-content:space-between;align-items:center;padding:28px 32px;border-bottom:1px solid var(--border)}
+.cart-title{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:300}
+.cart-close{background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer;transition:color .2s;line-height:1}
+.cart-close:hover{color:var(--cream)}
+.cart-items{flex:1;overflow-y:auto;padding:24px 32px;display:flex;flex-direction:column;gap:20px}
+.cart-item{display:flex;gap:16px;padding-bottom:20px;border-bottom:1px solid var(--border)}
+.cart-item-img{width:72px;height:90px;background:var(--bg3);flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.cart-item-info{flex:1;display:flex;flex-direction:column;gap:4px}
+.cart-item-name{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:400}
+.cart-item-meta{font-size:11px;color:var(--muted);letter-spacing:.5px}
+.cart-item-price{font-size:14px;color:var(--gold)}
+.cart-item-qty{display:flex;align-items:center;gap:10px;margin-top:auto}
+.ciq-btn{background:none;border:1px solid var(--border);color:var(--cream);width:26px;height:26px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:border-color .2s}
+.ciq-btn:hover{border-color:var(--gold)}
+.ciq-val{font-size:13px;min-width:16px;text-align:center}
+.cart-item-del{background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;margin-left:auto;transition:color .2s;align-self:flex-start}
+.cart-item-del:hover{color:var(--red)}
+.cart-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;color:var(--muted)}
+.cart-empty-icon{font-size:48px;opacity:.4}
+.cart-footer{padding:24px 32px;border-top:1px solid var(--border)}
+.cart-coupon{display:flex;gap:0;margin-bottom:20px}
+.coupon-input{flex:1;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-right:none;color:var(--cream);padding:11px 14px;font-family:'DM Sans',sans-serif;font-size:12px;outline:none}
+.coupon-input::placeholder{color:var(--muted)}
+.coupon-btn{background:none;border:1px solid var(--border);color:var(--muted);padding:11px 18px;font-size:11px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .3s}
+.coupon-btn:hover{border-color:var(--gold);color:var(--gold)}
+.cart-totals{display:flex;flex-direction:column;gap:10px;margin-bottom:20px}
+.cart-row{display:flex;justify-content:space-between;font-size:13px}
+.cart-row.total{font-size:18px;font-family:'Cormorant Garamond',serif;color:var(--gold);padding-top:12px;border-top:1px solid var(--border);margin-top:4px}
+.btn-checkout{width:100%;background:var(--gold);border:none;color:var(--black);padding:17px;font-family:'DM Sans',sans-serif;font-size:12px;letter-spacing:2px;text-transform:uppercase;font-weight:500;cursor:pointer;transition:background .3s}
+.btn-checkout:hover{background:var(--gold2)}
+
+/* ── LOGIN MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:400;display:none;align-items:center;justify-content:center;backdrop-filter:blur(8px)}
+.modal-overlay.open{display:flex}
+.modal{background:var(--bg2);width:440px;border:1px solid var(--border);padding:48px;position:relative;animation:modalIn .3s ease}
+@keyframes modalIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.modal-close{position:absolute;top:20px;right:20px;background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;transition:color .2s}
+.modal-close:hover{color:var(--cream)}
+.modal-logo{font-family:'Cormorant Garamond',serif;font-size:26px;letter-spacing:6px;text-align:center;margin-bottom:32px;color:var(--cream)}
+.modal-tabs{display:flex;gap:0;margin-bottom:32px;border-bottom:1px solid var(--border)}
+.modal-tab{flex:1;background:none;border:none;color:var(--muted);padding:12px;font-family:'DM Sans',sans-serif;font-size:12px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .3s}
+.modal-tab.active{color:var(--gold);border-bottom-color:var(--gold)}
+.modal-form{display:flex;flex-direction:column;gap:16px}
+.form-group{display:flex;flex-direction:column;gap:7px}
+.form-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted)}
+.form-input{background:rgba(255,255,255,0.03);border:1px solid var(--border);color:var(--cream);padding:13px 16px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;transition:border-color .3s}
+.form-input:focus{border-color:var(--gold)}
+.form-input::placeholder{color:var(--muted)}
+.btn-form{background:var(--gold);border:none;color:var(--black);padding:15px;font-family:'DM Sans',sans-serif;font-size:12px;letter-spacing:2px;text-transform:uppercase;font-weight:500;cursor:pointer;transition:background .3s;margin-top:8px}
+.btn-form:hover{background:var(--gold2)}
+.modal-footer{text-align:center;margin-top:16px;font-size:12px;color:var(--muted)}
+.modal-link{color:var(--gold);cursor:pointer;background:none;border:none;font-size:12px;text-decoration:underline}
+
+/* ── ADMIN ── */
+.admin-wrap{display:grid;grid-template-columns:220px 1fr;min-height:calc(100vh - 64px)}
+.admin-sidebar{background:var(--bg2);border-right:1px solid var(--border);padding:32px 0}
+.admin-nav-item{display:flex;align-items:center;gap:12px;padding:12px 28px;cursor:pointer;transition:all .3s;font-size:13px;color:var(--muted);border-left:3px solid transparent}
+.admin-nav-item:hover,.admin-nav-item.active{color:var(--cream);background:rgba(255,255,255,0.03)}
+.admin-nav-item.active{border-left-color:var(--gold);color:var(--gold)}
+.admin-nav-icon{font-size:16px;width:20px;text-align:center}
+.admin-main{padding:40px;overflow-y:auto}
+.admin-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:36px}
+.admin-title{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:300}
+.btn-admin-action{background:var(--gold);border:none;color:var(--black);padding:10px 22px;font-family:'DM Sans',sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;font-weight:500;cursor:pointer;transition:background .3s}
+.btn-admin-action:hover{background:var(--gold2)}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:36px}
+.stat-card{background:var(--bg2);border:1px solid var(--border);padding:24px;display:flex;flex-direction:column;gap:8px;transition:border-color .3s}
+.stat-card:hover{border-color:rgba(201,169,110,0.35)}
+.stat-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted)}
+.stat-value{font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:300;color:var(--cream)}
+.stat-change{font-size:12px;display:flex;align-items:center;gap:4px}
+.stat-up{color:var(--green)}
+.stat-down{color:var(--red)}
+.admin-section{background:var(--bg2);border:1px solid var(--border);overflow:hidden;margin-bottom:24px}
+.admin-section-header{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.admin-section-title{font-size:14px;letter-spacing:1px;font-weight:400}
+.admin-table{width:100%;border-collapse:collapse}
+.admin-table th{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);padding:12px 24px;text-align:left;border-bottom:1px solid var(--border);background:rgba(255,255,255,0.02)}
+.admin-table td{padding:14px 24px;font-size:13px;border-bottom:1px solid rgba(201,169,110,0.06);color:var(--cream)}
+.admin-table tr:last-child td{border-bottom:none}
+.admin-table tr:hover td{background:rgba(255,255,255,0.02)}
+.status-pill{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:10px;letter-spacing:1px;text-transform:uppercase}
+.s-pending{background:rgba(201,169,110,0.1);color:var(--gold);border:1px solid rgba(201,169,110,0.2)}
+.s-prep{background:rgba(82,168,122,0.1);color:var(--green);border:1px solid rgba(82,168,122,0.2)}
+.s-sent{background:rgba(82,130,168,0.1);color:#52a0d4;border:1px solid rgba(82,130,168,0.2)}
+.s-delivered{background:rgba(82,168,122,0.15);color:var(--green);border:1px solid rgba(82,168,122,0.3)}
+.s-cancelled{background:rgba(224,82,82,0.1);color:var(--red);border:1px solid rgba(224,82,82,0.2)}
+.action-btn{background:none;border:1px solid var(--border);color:var(--muted);padding:5px 12px;font-size:11px;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif}
+.action-btn:hover{border-color:var(--gold);color:var(--gold)}
+.chart-bar-wrap{padding:24px;display:flex;align-items:flex-end;gap:10px;height:180px}
+.chart-bar-col{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1}
+.chart-bar{width:100%;background:linear-gradient(to top,var(--gold),rgba(201,169,110,0.4));border-radius:2px 2px 0 0;transition:height .8s ease;min-height:4px}
+.chart-label{font-size:10px;color:var(--muted);letter-spacing:.5px}
+.chart-val{font-size:10px;color:var(--gold);font-weight:500}
+.product-thumb{width:36px;height:44px;background:var(--bg3);display:inline-flex;align-items:center;justify-content:center;overflow:hidden;vertical-align:middle;margin-right:10px}
+.stock-indicator{display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:5px}
+.stock-ok{background:var(--green)}
+.stock-low{background:var(--gold)}
+.stock-out{background:var(--red)}
+
+/* ══════════════════════════════════════════
+   RESPONSIVE — Tablet (≤ 1024px)
+══════════════════════════════════════════ */
+@media(max-width:1024px){
+  nav{padding:0 24px}
+  .nav-tabs .nav-tab:last-child{display:none}
+  .store-hero{padding:40px 24px 28px;flex-direction:column;align-items:flex-start;gap:24px}
+  .store-hero-left h1{font-size:38px}
+  .store-filters{width:100%;overflow-x:auto;flex-wrap:nowrap;padding-bottom:4px;gap:8px;scrollbar-width:none}
+  .store-filters::-webkit-scrollbar{display:none}
+  .search-input{width:160px}
+  .products-grid{grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}
+  .detail-wrap{grid-template-columns:1fr}
+  .detail-gallery{min-height:380px}
+  .gallery-thumbs{display:none}
+  .detail-info{padding:36px 32px}
+  .admin-wrap{grid-template-columns:180px 1fr}
+  .admin-main{padding:28px}
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .admin-sidebar{padding:20px 0}
+  .admin-nav-item{padding:11px 18px;font-size:12px}
+  .chart-bar-wrap{overflow-x:auto}
+}
+
+/* ══════════════════════════════════════════
+   RESPONSIVE — Mobile (≤ 768px)
+══════════════════════════════════════════ */
+@media(max-width:768px){
+  /* NAV mobile */
+  nav{padding:0 18px;height:56px}
+  .nav-tabs{display:none}
+  .btn-login{display:none}
+  .logo{font-size:20px;letter-spacing:5px}
+  .nav-right{gap:10px}
+  .icon-btn{width:34px;height:34px;font-size:15px}
+  .hamburger{display:flex !important}
+
+  /* Pages */
+  .page{padding-top:56px}
+
+  /* Store hero */
+  .store-hero{padding:28px 18px 20px;flex-direction:column;gap:20px}
+  .store-hero-left h1{font-size:30px}
+  .store-hero-left p{font-size:12px}
+  .store-filters{width:100%;overflow-x:auto;flex-wrap:nowrap;padding-bottom:6px;gap:8px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .store-filters::-webkit-scrollbar{display:none}
+  .search-wrap{flex-shrink:0}
+  .search-input{width:140px;font-size:11px}
+  .filter-chip{white-space:nowrap;padding:7px 14px;font-size:10px}
+
+  /* Products */
+  .products-grid{grid-template-columns:1fr 1fr;gap:2px;padding:2px}
+  .card-name{font-size:16px}
+  .card-body{padding:12px 14px 16px}
+  .card-footer{flex-direction:column;align-items:flex-start;gap:4px}
+  .card-overlay{display:none}
+
+  /* Detail — stack vertically */
+  .detail-wrap{grid-template-columns:1fr;grid-template-rows:auto auto}
+  .detail-gallery{min-height:300px;max-height:52vw}
+  .detail-info{padding:24px 18px 40px;overflow-y:visible}
+  .detail-name{font-size:28px}
+  .detail-price-main{font-size:26px}
+  .detail-desc{font-size:13px}
+  .gallery-thumbs{display:none}
+
+  /* Cart sidebar — full width */
+  .cart-sidebar{width:100%;right:-100%}
+  .cart-header{padding:20px 20px}
+  .cart-items{padding:16px 20px}
+  .cart-footer{padding:16px 20px}
+
+  /* Login modal — full screen on mobile */
+  .modal{width:100%;max-width:100%;margin:0;padding:36px 24px;border-left:none;border-right:none;border-bottom:none;position:fixed;bottom:0;top:auto;animation:modalUp .35s ease}
+  @keyframes modalUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+  .modal-overlay{align-items:flex-end}
+
+  /* Admin — tabs en la parte inferior */
+  .admin-wrap{grid-template-columns:1fr;position:relative}
+  .admin-sidebar{display:none}
+  .admin-bottom-bar{display:flex !important}
+  .admin-main{padding:20px 16px 80px}
+  .admin-header{flex-direction:column;align-items:flex-start;gap:12px;margin-bottom:20px}
+  .admin-title{font-size:26px}
+  .stats-grid{grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
+  .stat-card{padding:16px}
+  .stat-value{font-size:26px}
+  .admin-section{overflow-x:auto}
+  .admin-table{min-width:560px}
+  .chart-bar-wrap{overflow-x:auto;padding:16px}
+
+  /* Toast */
+  .toast{width:90%;text-align:center}
+}
+
+/* ══════════════════════════════════════════
+   RESPONSIVE — Small mobile (≤ 420px)
+══════════════════════════════════════════ */
+@media(max-width:420px){
+  .store-hero-left h1{font-size:26px}
+  .products-grid{grid-template-columns:1fr}
+  .detail-gallery{max-height:70vw}
+  .stats-grid{grid-template-columns:1fr}
+}
+
+/* ── HAMBURGER ── */
+.hamburger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:6px}
+.hamburger span{display:block;width:22px;height:1.5px;background:var(--cream);transition:all .3s}
+.hamburger.open span:nth-child(1){transform:translateY(6.5px) rotate(45deg)}
+.hamburger.open span:nth-child(2){opacity:0}
+.hamburger.open span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg)}
+
+/* Mobile drawer menu */
+.mobile-menu{position:fixed;top:56px;left:0;right:0;background:rgba(8,8,8,0.98);backdrop-filter:blur(16px);z-index:190;border-bottom:1px solid var(--border);padding:20px;display:flex;flex-direction:column;gap:4px;transform:translateY(-110%);transition:transform .35s cubic-bezier(.4,0,.2,1)}
+.mobile-menu.open{transform:translateY(0)}
+.mobile-menu-item{padding:14px 16px;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);cursor:pointer;border-bottom:1px solid var(--border);transition:color .2s}
+.mobile-menu-item:last-child{border-bottom:none}
+.mobile-menu-item:hover,.mobile-menu-item.active{color:var(--gold)}
+
+/* Admin bottom bar (mobile) */
+.admin-bottom-bar{display:none;position:fixed;bottom:0;left:0;right:0;background:rgba(8,8,8,0.97);border-top:1px solid var(--border);z-index:150;backdrop-filter:blur(12px)}
+.admin-bottom-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 4px;cursor:pointer;transition:color .2s;color:var(--muted);font-size:9px;letter-spacing:1px;text-transform:uppercase;border:none;background:none}
+.admin-bottom-item.active,.admin-bottom-item:hover{color:var(--gold)}
+.admin-bottom-icon{font-size:18px}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:32px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--bg2);border:1px solid var(--gold);color:var(--cream);padding:14px 28px;font-size:13px;z-index:600;transition:transform .4s cubic-bezier(.34,1.56,.64,1);white-space:nowrap;letter-spacing:.5px}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.toast strong{color:var(--gold)}
+
+/* ── MISC ── */
+.divider{height:1px;background:var(--border);margin:0 40px}
+.empty-page{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100vh - 200px);gap:14px;color:var(--muted)}
+.empty-page h2{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:300;color:var(--cream)}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo" onclick="goTo('store')">AURORE</div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="goTo('store')">Tienda</button>
+    <button class="nav-tab" onclick="goTo('admin')">Panel Admin</button>
+  </div>
+  <div class="nav-right">
+    <button class="icon-btn" onclick="openCart()" title="Carrito">
+      🛍
+      <span class="badge" id="cart-badge">0</span>
+    </button>
+    <button class="icon-btn" title="Favoritos">♡</button>
+    <button class="btn-login" onclick="openLogin()">Ingresar</button>
+  </div>
+</nav>
+
+<!-- ═══════════════ STORE PAGE ═══════════════ -->
+<div class="page active" id="page-store">
+  <div class="store-hero">
+    <div class="store-hero-left">
+      <h1>Colección <em>Otoño</em><br>2025</h1>
+      <p>48 piezas · Nueva temporada</p>
+    </div>
+    <div class="store-filters">
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input class="search-input" placeholder="Buscar..." id="search-input" oninput="filterProducts()"/>
+      </div>
+      <button class="filter-chip active" onclick="setFilter('all',this)">Todo</button>
+      <button class="filter-chip" onclick="setFilter('vestidos',this)">Vestidos</button>
+      <button class="filter-chip" onclick="setFilter('blazers',this)">Blazers</button>
+      <button class="filter-chip" onclick="setFilter('faldas',this)">Faldas</button>
+      <button class="filter-chip" onclick="setFilter('abrigos',this)">Abrigos</button>
+      <button class="filter-chip" onclick="setFilter('blusas',this)">Blusas</button>
+    </div>
+  </div>
+  <div class="products-grid" id="products-grid"></div>
+</div>
+
+<!-- ═══════════════ DETAIL PAGE ═══════════════ -->
+<div class="page" id="page-detail">
+  <div class="detail-wrap">
+    <div class="detail-gallery" id="detail-gallery">
+      <div class="detail-gallery-bg" id="detail-gallery-bg"></div>
+      <div class="detail-garment" id="detail-garment"></div>
+      <div class="gallery-thumbs">
+        <div class="thumb active">1</div>
+        <div class="thumb">2</div>
+        <div class="thumb">3</div>
+        <div class="thumb">4</div>
+      </div>
+    </div>
+    <div class="detail-info" id="detail-info"></div>
+  </div>
+</div>
+
+<!-- ═══════════════ ADMIN PAGE ═══════════════ -->
+<div class="page" id="page-admin">
+  <div class="admin-wrap">
+    <div class="admin-sidebar">
+      <div class="admin-nav-item active" onclick="adminSection('dashboard',this)"><span class="admin-nav-icon">📊</span>Dashboard</div>
+      <div class="admin-nav-item" onclick="adminSection('products',this)"><span class="admin-nav-icon">👗</span>Productos</div>
+      <div class="admin-nav-item" onclick="adminSection('orders',this)"><span class="admin-nav-icon">📦</span>Pedidos</div>
+      <div class="admin-nav-item" onclick="adminSection('users',this)"><span class="admin-nav-icon">👤</span>Usuarios</div>
+      <div class="admin-nav-item" onclick="adminSection('categories',this)"><span class="admin-nav-icon">🏷</span>Categorías</div>
+    </div>
+    <div class="admin-main" id="admin-main"></div>
+  </div>
+</div>
+
+<!-- ═══════════════ CART SIDEBAR ═══════════════ -->
+<div class="cart-overlay" id="cart-overlay" onclick="closeCart()"></div>
+<div class="cart-sidebar" id="cart-sidebar">
+  <div class="cart-header">
+    <div class="cart-title">Tu carrito</div>
+    <button class="cart-close" onclick="closeCart()">✕</button>
+  </div>
+  <div class="cart-items" id="cart-items"></div>
+  <div class="cart-footer" id="cart-footer"></div>
+</div>
+
+<!-- ═══════════════ LOGIN MODAL ═══════════════ -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeLogin(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="closeLogin()">✕</button>
+    <div class="modal-logo">AURORE</div>
+    <div class="modal-tabs">
+      <button class="modal-tab active" onclick="switchTab('login',this)">Ingresar</button>
+      <button class="modal-tab" onclick="switchTab('register',this)">Registrarse</button>
+    </div>
+    <div id="modal-form-wrap"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════ DATA ══════════════
+const PRODUCTS = [
+  {id:1,name:'Vestido Noir',sub:'Marrón Tostado',cat:'vestidos',price:289000,oldPrice:null,material:'Crepé italiano',rating:4.8,reviews:34,tag:'nuevo',
+   sizes:['XS','S','M','L','XL'],colors:['#8B6345','#2a1f1a','#3d5040'],
+   bg:'linear-gradient(160deg,#2a1f1a 0%,#1a1210 40%,#3d2e25 100%)',
+   desc:'Corte midi entallado en cintura. Diseñado para la mujer que transita entre el día y la noche sin perder presencia. Tela de crepé de importación italiana con caída perfecta.',
+   care:['Lavar en frío','No centrifugar','Planchar a baja temperatura'],
+   svg:`<svg width="160" height="280" viewBox="0 0 160 280" fill="none"><defs><linearGradient id="d1a" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#8B6345"/><stop offset="100%" stop-color="#5C3D1E"/></linearGradient></defs><path d="M56 32C44 40 32 56 28 76L16 128C10 160 13 176 22 182L37 190 24 264 136 264 123 190 138 182C147 176 150 160 144 128L132 76C128 56 116 40 104 32Z" fill="url(#d1a)"/><path d="M66 32C72 20 88 18 94 32" stroke="#c9a96e" stroke-width="1.2" fill="none" opacity=".8"/><line x1="22" y1="150" x2="138" y2="150" stroke="#c9a96e" stroke-width=".8" opacity=".5"/></svg>`},
+  {id:2,name:'Blazer',sub:'Azul Medianoche',cat:'blazers',price:198000,oldPrice:null,material:'Lana merino',rating:4.6,reviews:21,tag:'nuevo',
+   sizes:['S','M','L'],colors:['#2a3f6f','#1a1a1a','#4a2a4a'],
+   bg:'linear-gradient(160deg,#1a1f2e 0%,#0d1220 40%,#252d3d 100%)',
+   desc:'Sastre clásico de corte recto con forro interior en seda. La pieza de poder de la temporada. Hombreras sutiles que alargan la silueta.',
+   care:['Lavar en seco','Colgar siempre','No doblar'],
+   svg:`<svg width="160" height="220" viewBox="0 0 160 220" fill="none"><defs><linearGradient id="d2a" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#2a3f6f"/><stop offset="100%" stop-color="#1a2a4a"/></linearGradient></defs><path d="M16 24L80 40L144 24L148 200H12Z" fill="url(#d2a)"/><path d="M80 40L64 200H96Z" fill="#0f1a2e" opacity=".8"/><path d="M16 24L44 48L48 200H14Z" fill="#1a2a4a"/><path d="M144 24L116 48L112 200H146Z" fill="#1a2a4a"/><path d="M80 40L58 64L66 80Z" fill="#1a2a4a" opacity=".8"/><path d="M80 40L102 64L94 80Z" fill="#1a2a4a" opacity=".8"/><circle cx="80" cy="120" r="3" fill="#c9a96e" opacity=".6"/><circle cx="80" cy="136" r="3" fill="#c9a96e" opacity=".6"/><circle cx="80" cy="152" r="3" fill="#c9a96e" opacity=".6"/></svg>`},
+  {id:3,name:'Falda Forêt',sub:'Verde Bosque',cat:'faldas',price:145000,oldPrice:180000,material:'Algodón orgánico',rating:4.9,reviews:56,tag:'oferta',
+   sizes:['XS','S','M','L'],colors:['#3a5a3a','#1e3a1e','#5a4a2a'],
+   bg:'linear-gradient(160deg,#1e2a1e 0%,#111a11 40%,#2a3d2a 100%)',
+   desc:'Falda midi con tablas profundas. Tela texturizada de algodón de origen sostenible y certificado. Cierre lateral invisible. Movimiento perfecto al caminar.',
+   care:['Lavar a máquina 30°','Tender al aire','Sin plancha directa'],
+   svg:`<svg width="160" height="220" viewBox="0 0 160 220" fill="none"><defs><linearGradient id="d3a" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#3a5a3a"/><stop offset="100%" stop-color="#1e3a1e"/></linearGradient></defs><path d="M40 16H120L126 20L136 210H24Z" fill="url(#d3a)"/><line x1="40" y1="16" x2="120" y2="16" stroke="#c9a96e" stroke-width="2" opacity=".6"/><path d="M48 28C46 100 40 160 30 208" stroke="rgba(255,255,255,.08)" stroke-width="1.5" fill="none"/><path d="M112 28C114 100 120 160 130 208" stroke="rgba(255,255,255,.08)" stroke-width="1.5" fill="none"/></svg>`},
+  {id:4,name:'Abrigo Miel',sub:'Camel Clásico',cat:'abrigos',price:420000,oldPrice:null,material:'Lana doble faz',rating:4.7,reviews:18,tag:'nuevo',
+   sizes:['S','M','L','XL'],colors:['#7a5a2a','#4a3510','#2a1f1a'],
+   bg:'linear-gradient(160deg,#2a2218 0%,#1a160e 40%,#3d3020 100%)',
+   desc:'Abrigo de corte recto con cinturón removible. Lana doble faz importada de máxima calidad. Detalle de bolsillos con ribete dorado. La inversión de la temporada.',
+   care:['Solo limpieza en seco','Guardar con cedro','Cepillar suavemente'],
+   svg:`<svg width="160" height="240" viewBox="0 0 160 240" fill="none"><defs><linearGradient id="d4a" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7a5a2a"/><stop offset="100%" stop-color="#4a3510"/></linearGradient></defs><path d="M20 28L80 44L140 28L144 220H16Z" fill="url(#d4a)"/><path d="M80 44L66 220H94Z" fill="#3a2808" opacity=".7"/><path d="M44 28L80 44L116 28L112 20L80 26L48 20Z" fill="#6a4a1a"/><rect x="22" y="128" width="116" height="8" rx="2" fill="#3a2808" opacity=".6"/><circle cx="80" cy="132" r="4" fill="#c9a96e" opacity=".7"/></svg>`},
+  {id:5,name:'Blusa Velvet',sub:'Ciruela Oscuro',cat:'blusas',price:118000,oldPrice:null,material:'Terciopelo de seda',rating:4.5,reviews:29,tag:null,
+   sizes:['XS','S','M','L'],colors:['#5a2a4a','#3a1530','#2a3f6f'],
+   bg:'linear-gradient(160deg,#2a1a24 0%,#1a0f18 40%,#3d2535 100%)',
+   desc:'Blusa de terciopelo de seda con escote en V y detalle de encaje en el borde inferior. Manga larga con puño ajustado. Una prenda que combina sensualidad y elegancia.',
+   care:['Lavar a mano en frío','Tender plana','No torcer'],
+   svg:`<svg width="160" height="160" viewBox="0 0 160 160" fill="none"><defs><linearGradient id="d5a" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#5a2a4a"/><stop offset="100%" stop-color="#3a1530"/></linearGradient></defs><path d="M24 24L80 16L136 24L140 110H20Z" fill="url(#d5a)"/><path d="M4 48L26 72L28 110H16Z" fill="#4a2040"/><path d="M156 48L134 72L132 110H144Z" fill="#4a2040"/><path d="M44 20L80 44L116 20" stroke="#c9a96e" stroke-width="1.5" fill="none" opacity=".7"/><path d="M20 106Q30 114 40 106Q50 114 60 106Q70 114 80 106Q90 114 100 106Q110 114 120 106Q130 114 140 110" stroke="#c9a96e" stroke-width="1" fill="none" opacity=".5"/></svg>`},
+  {id:6,name:'Vestido Duna',sub:'Arena y Lino',cat:'vestidos',price:265000,oldPrice:300000,material:'Lino natural',rating:4.4,reviews:12,tag:'oferta',
+   sizes:['S','M','L','XL'],colors:['#c4a882','#8a7055','#d4c4a4'],
+   bg:'linear-gradient(160deg,#2a2418 0%,#1a1a10 40%,#3d3520 100%)',
+   desc:'Vestido largo de lino natural con corte amplio. Perfecto para el día. Tirantes finos ajustables y escote recto. Dobladillo a media pantorrilla.',
+   care:['Lavar 40°','Planchar húmedo','Colgar siempre'],
+   svg:`<svg width="160" height="280" viewBox="0 0 160 280" fill="none"><defs><linearGradient id="d6a" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#c4a882"/><stop offset="100%" stop-color="#8a7055"/></linearGradient></defs><path d="M50 20H110L118 28L134 270H26L42 28Z" fill="url(#d6a)" opacity=".75"/><line x1="50" y1="20" x2="110" y2="20" stroke="#e8d5a3" stroke-width="1.5" opacity=".7"/><path d="M58 24V18" stroke="#e8d5a3" stroke-width="1.2"/><path d="M102 24V18" stroke="#e8d5a3" stroke-width="1.2"/></svg>`},
+]
+
+const ORDERS = [
+  {num:'AUR-00042',client:'Valentina Torres',items:2,total:'$407.000',status:'enviado',date:'12 Abr'},
+  {num:'AUR-00041',client:'Mariana López',items:1,total:'$289.000',status:'preparando',date:'11 Abr'},
+  {num:'AUR-00040',client:'Camila Restrepo',items:3,total:'$653.000',status:'entregado',date:'10 Abr'},
+  {num:'AUR-00039',client:'Sofía Gómez',items:1,total:'$198.000',status:'pendiente',date:'10 Abr'},
+  {num:'AUR-00038',client:'Isabella Martínez',items:2,total:'$388.000',status:'cancelado',date:'09 Abr'},
+]
+
+const USERS = [
+  {name:'Valentina Torres',email:'val@mail.com',orders:8,spent:'$2.140.000',role:'cliente',since:'Ene 2024'},
+  {name:'Mariana López',email:'mari@mail.com',orders:3,spent:'$561.000',role:'cliente',since:'Feb 2024'},
+  {name:'Admin Aurore',email:'admin@aurore.co',orders:0,spent:'—',role:'admin',since:'Dic 2023'},
+]
+
+let cart = []
+let currentFilter = 'all'
+let currentAdminSection = 'dashboard'
+
+// ══════════════ NAVIGATION ══════════════
+function goTo(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'))
+  document.getElementById('page-' + page).classList.add('active')
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'))
+  if(page === 'store') document.querySelectorAll('.nav-tab')[0].classList.add('active')
+  if(page === 'admin') {
+    document.querySelectorAll('.nav-tab')[1].classList.add('active')
+    renderAdmin('dashboard')
+  }
+}
+
+// ══════════════ STORE ══════════════
+function renderStore() {
+  const grid = document.getElementById('products-grid')
+  const q = document.getElementById('search-input').value.toLowerCase()
+  const filtered = PRODUCTS.filter(p => {
+    const catOk = currentFilter === 'all' || p.cat === currentFilter
+    const searchOk = !q || p.name.toLowerCase().includes(q) || p.sub.toLowerCase().includes(q)
+    return catOk && searchOk
+  })
+  grid.innerHTML = filtered.map(p => `
+    <div class="product-card" onclick="openDetail(${p.id})">
+      ${p.tag === 'nuevo' ? `<div class="badge-new">Nuevo</div>` : ''}
+      ${p.tag === 'oferta' ? `<div class="badge-sale">Oferta</div>` : ''}
+      <div class="card-img">
+        <div class="card-bg" style="background:${p.bg}"></div>
+        <div class="card-garment">${p.svg}</div>
+        <div class="card-overlay">
+          <button class="card-quick-add" onclick="quickAdd(event,${p.id})">Agregar rápido</button>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-cat">${p.cat}</div>
+        <div class="card-name">${p.name} <span style="font-style:italic;color:var(--muted);font-size:16px">${p.sub}</span></div>
+        <div class="card-footer">
+          <div style="display:flex;align-items:baseline;gap:8px">
+            <span class="card-price">${fmtPrice(p.price)}</span>
+            ${p.oldPrice ? `<span class="card-old">${fmtPrice(p.oldPrice)}</span>` : ''}
+          </div>
+          <div class="card-rating"><span class="stars">★★★★★</span> ${p.rating}</div>
+        </div>
+      </div>
+    </div>
+  `).join('')
+}
+
+function setFilter(cat, el) {
+  currentFilter = cat
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'))
+  el.classList.add('active')
+  renderStore()
+}
+
+function filterProducts() { renderStore() }
+
+function quickAdd(e, id) {
+  e.stopPropagation()
+  const p = PRODUCTS.find(x => x.id === id)
+  addToCart(p, p.sizes[0], p.colors[0])
+}
+
+// ══════════════ PRODUCT DETAIL ══════════════
+let detailProduct = null
+let selectedSize = null
+let selectedColor = null
+let qty = 1
+
+function openDetail(id) {
+  detailProduct = PRODUCTS.find(p => p.id === id)
+  selectedSize = detailProduct.sizes[0]
+  selectedColor = detailProduct.colors[0]
+  qty = 1
+  renderDetail()
+  goToPage('detail')
+}
+
+function goToPage(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'))
+  document.getElementById('page-' + page).classList.add('active')
+}
+
+function renderDetail() {
+  const p = detailProduct
+  document.getElementById('detail-gallery-bg').style.background = p.bg
+  document.getElementById('detail-garment').innerHTML = p.svg.replace(/width="\d+"/, 'width="240"').replace(/height="\d+"/, 'height="380"')
+  document.getElementById('detail-info').innerHTML = `
+    <div class="detail-breadcrumb" onclick="goTo('store')">← Volver a la tienda</div>
+    <div class="detail-cat">${p.cat}</div>
+    <div class="detail-name">${p.name} <em style="color:var(--muted);font-size:34px">${p.sub}</em></div>
+    <div class="detail-rating">
+      <span class="detail-stars">★★★★★</span>
+      <span style="font-size:14px;color:var(--cream)">${p.rating}</span>
+      <span class="detail-reviews">(${p.reviews} reseñas)</span>
+    </div>
+    <div class="detail-price">
+      <span class="detail-price-main">${fmtPrice(p.price)}</span>
+      ${p.oldPrice ? `<span class="detail-price-old">${fmtPrice(p.oldPrice)}</span>
+      <span style="font-size:12px;color:var(--red);background:rgba(224,82,82,.1);padding:3px 8px;border:1px solid rgba(224,82,82,.2)">−${Math.round((1-p.price/p.oldPrice)*100)}%</span>` : ''}
+    </div>
+    <div class="detail-desc">${p.desc}</div>
+    <div class="detail-section-label">Talla seleccionada: <strong style="color:var(--gold)" id="sel-size-label">${selectedSize}</strong></div>
+    <div class="size-grid">${p.sizes.map(s => `<button class="size-btn${s===selectedSize?' selected':''}" onclick="selSize('${s}',this)">${s}</button>`).join('')}</div>
+    <div class="detail-section-label">Color</div>
+    <div class="color-grid">${p.colors.map((c,i) => `<div class="color-btn${i===0?' selected':''}" style="background:${c}" onclick="selColor(${i},this)" title="${c}"></div>`).join('')}</div>
+    <div class="detail-section-label">Cantidad</div>
+    <div class="qty-wrap">
+      <button class="qty-btn" onclick="changeQty(-1)">−</button>
+      <div class="qty-val" id="qty-val">1</div>
+      <button class="qty-btn" onclick="changeQty(1)">+</button>
+    </div>
+    <button class="btn-add-cart" onclick="addFromDetail()">Agregar al carrito — ${fmtPrice(p.price)}</button>
+    <button class="btn-wishlist">♡ Guardar en favoritos</button>
+    <div class="detail-meta">
+      <div class="detail-meta-row"><span>Material</span><span>${p.material}</span></div>
+      <div class="detail-meta-row"><span>Cuidados</span><span>${p.care.join(' · ')}</span></div>
+      <div class="detail-meta-row"><span>Referencia</span><span>AUR-${String(p.id).padStart(4,'0')}</span></div>
+      <div class="detail-meta-row"><span>Envío</span><span>Gratis en compras +$200.000</span></div>
+    </div>
+  `
+}
+
+function selSize(s, el) {
+  selectedSize = s
+  document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('selected'))
+  el.classList.add('selected')
+  const lbl = document.getElementById('sel-size-label')
+  if(lbl) lbl.textContent = s
+}
+
+function selColor(i, el) {
+  selectedColor = detailProduct.colors[i]
+  document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('selected'))
+  el.classList.add('selected')
+}
+
+function changeQty(d) {
+  qty = Math.max(1, qty + d)
+  document.getElementById('qty-val').textContent = qty
+}
+
+function addFromDetail() {
+  addToCart(detailProduct, selectedSize, selectedColor, qty)
+}
+
+// ══════════════ CART ══════════════
+function addToCart(product, size, color, quantity = 1) {
+  const existing = cart.find(i => i.id === product.id && i.size === size && i.color === color)
+  if(existing) {
+    existing.qty += quantity
+  } else {
+    cart.push({ id: product.id, name: product.name, sub: product.sub, price: product.price, size, color, qty: quantity, svg: product.svg })
+  }
+  updateCartBadge()
+  renderCart()
+  showToast(`<strong>${product.name}</strong> agregado al carrito`)
+}
+
+function updateCartBadge() {
+  const total = cart.reduce((s,i) => s + i.qty, 0)
+  document.getElementById('cart-badge').textContent = total
+}
+
+function renderCart() {
+  const itemsEl = document.getElementById('cart-items')
+  const footerEl = document.getElementById('cart-footer')
+  if(cart.length === 0) {
+    itemsEl.innerHTML = `<div class="cart-empty"><div class="cart-empty-icon">🛍</div><div>Tu carrito está vacío</div><button class="btn-login" style="margin-top:8px" onclick="closeCart();goTo('store')">Ver colección</button></div>`
+    footerEl.innerHTML = ''
+    return
+  }
+  itemsEl.innerHTML = cart.map((item,i) => `
+    <div class="cart-item">
+      <div class="cart-item-img">${item.svg.replace(/width="\d+"/,'width="60"').replace(/height="\d+"/,'height="80"')}</div>
+      <div class="cart-item-info">
+        <div class="cart-item-name">${item.name}</div>
+        <div class="cart-item-meta">${item.sub} · Talla ${item.size}</div>
+        <div class="cart-item-price">${fmtPrice(item.price * item.qty)}</div>
+        <div class="cart-item-qty">
+          <button class="ciq-btn" onclick="cartQty(${i},-1)">−</button>
+          <span class="ciq-val">${item.qty}</span>
+          <button class="ciq-btn" onclick="cartQty(${i},1)">+</button>
+        </div>
+      </div>
+      <button class="cart-item-del" onclick="cartRemove(${i})">✕</button>
+    </div>
+  `).join('')
+
+  const subtotal = cart.reduce((s,i) => s + i.price * i.qty, 0)
+  const shipping = subtotal >= 200000 ? 0 : 12000
+  const total = subtotal + shipping
+  footerEl.innerHTML = `
+    <div class="cart-coupon">
+      <input class="coupon-input" placeholder="Código de cupón"/>
+      <button class="coupon-btn">Aplicar</button>
+    </div>
+    <div class="cart-totals">
+      <div class="cart-row"><span style="color:var(--muted)">Subtotal</span><span>${fmtPrice(subtotal)}</span></div>
+      <div class="cart-row"><span style="color:var(--muted)">Envío</span><span>${shipping === 0 ? '<span style="color:var(--green)">Gratis</span>' : fmtPrice(shipping)}</span></div>
+      <div class="cart-row total"><span>Total</span><span>${fmtPrice(total)}</span></div>
+    </div>
+    <button class="btn-checkout" onclick="showToast('Redirigiendo al checkout... 🛒')">Finalizar compra</button>
+  `
+}
+
+function cartQty(i, d) {
+  cart[i].qty = Math.max(1, cart[i].qty + d)
+  updateCartBadge(); renderCart()
+}
+
+function cartRemove(i) {
+  cart.splice(i, 1)
+  updateCartBadge(); renderCart()
+  showToast('Producto eliminado del carrito')
+}
+
+function openCart() {
+  renderCart()
+  document.getElementById('cart-overlay').classList.add('open')
+  document.getElementById('cart-sidebar').classList.add('open')
+}
+
+function closeCart() {
+  document.getElementById('cart-overlay').classList.remove('open')
+  document.getElementById('cart-sidebar').classList.remove('open')
+}
+
+// ══════════════ LOGIN MODAL ══════════════
+function openLogin() { document.getElementById('modal-overlay').classList.add('open'); renderLoginForm() }
+function closeLogin(e) {
+  if(!e || e.target === document.getElementById('modal-overlay')) {
+    document.getElementById('modal-overlay').classList.remove('open')
+  }
+}
+function switchTab(tab, el) {
+  document.querySelectorAll('.modal-tab').forEach(t => t.classList.remove('active'))
+  el.classList.add('active')
+  renderLoginForm(tab)
+}
+function renderLoginForm(tab = 'login') {
+  const wrap = document.getElementById('modal-form-wrap')
+  if(tab === 'login') {
+    wrap.innerHTML = `
+      <div class="modal-form">
+        <div class="form-group"><label class="form-label">Correo</label><input class="form-input" type="email" placeholder="tu@correo.com"/></div>
+        <div class="form-group"><label class="form-label">Contraseña</label><input class="form-input" type="password" placeholder="••••••••"/></div>
+        <button class="btn-form" onclick="showToast('Iniciando sesión... ✓');closeLogin()">Ingresar</button>
+        <div class="modal-footer">¿Olvidaste tu contraseña? <button class="modal-link">Recuperar</button></div>
+      </div>`
+  } else {
+    wrap.innerHTML = `
+      <div class="modal-form">
+        <div class="form-group"><label class="form-label">Nombre</label><input class="form-input" placeholder="Tu nombre completo"/></div>
+        <div class="form-group"><label class="form-label">Correo</label><input class="form-input" type="email" placeholder="tu@correo.com"/></div>
+        <div class="form-group"><label class="form-label">Contraseña</label><input class="form-input" type="password" placeholder="Mínimo 6 caracteres"/></div>
+        <button class="btn-form" onclick="showToast('Cuenta creada con éxito ✓');closeLogin()">Crear cuenta</button>
+      </div>`
+  }
+}
+
+// ══════════════ ADMIN ══════════════
+function adminSection(sec, el) {
+  currentAdminSection = sec
+  document.querySelectorAll('.admin-nav-item').forEach(i => i.classList.remove('active'))
+  el.classList.add('active')
+  renderAdmin(sec)
+}
+
+function renderAdmin(sec) {
+  const main = document.getElementById('admin-main')
+  if(sec === 'dashboard') {
+    main.innerHTML = `
+      <div class="admin-header">
+        <div class="admin-title">Dashboard</div>
+        <button class="btn-admin-action" onclick="showToast('Reporte exportado ✓')">Exportar reporte</button>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-label">Ventas del mes</div><div class="stat-value">$8.4M</div><div class="stat-change stat-up">▲ 18% vs mes anterior</div></div>
+        <div class="stat-card"><div class="stat-label">Pedidos</div><div class="stat-value">124</div><div class="stat-change stat-up">▲ 12 esta semana</div></div>
+        <div class="stat-card"><div class="stat-label">Clientes activos</div><div class="stat-value">341</div><div class="stat-change stat-up">▲ 23 nuevos</div></div>
+        <div class="stat-card"><div class="stat-label">Producto estrella</div><div class="stat-value" style="font-size:20px;margin-top:4px">Vestido Noir</div><div class="stat-change" style="color:var(--muted)">34 unidades</div></div>
+      </div>
+      <div class="admin-section">
+        <div class="admin-section-header"><div class="admin-section-title">Ventas por día — Abril</div></div>
+        <div class="chart-bar-wrap" id="chart"></div>
+      </div>
+      <div class="admin-section">
+        <div class="admin-section-header"><div class="admin-section-title">Últimos pedidos</div></div>
+        ${renderOrdersTable()}
+      </div>`
+    setTimeout(renderChart, 100)
+  }
+  else if(sec === 'products') {
+    main.innerHTML = `
+      <div class="admin-header">
+        <div class="admin-title">Productos</div>
+        <button class="btn-admin-action" onclick="showToast('Abre formulario de nuevo producto')">+ Nuevo producto</button>
+      </div>
+      <div class="admin-section">
+        <div class="admin-section-header"><div class="admin-section-title">${PRODUCTS.length} productos · 5 categorías</div>
+        <input style="background:rgba(255,255,255,0.03);border:1px solid var(--border);color:var(--cream);padding:7px 14px;font-family:'DM Sans',sans-serif;font-size:12px;outline:none" placeholder="Buscar producto..."/></div>
+        <table class="admin-table">
+          <thead><tr><th>Producto</th><th>Categoría</th><th>Precio</th><th>Stock</th><th>Ventas</th><th>Acciones</th></tr></thead>
+          <tbody>${PRODUCTS.map(p => `
+            <tr>
+              <td><span class="product-thumb">${p.svg.replace(/width="\d+"/,'width="28"').replace(/height="\d+"/,'height="36"')}</span>${p.name} ${p.sub}</td>
+              <td style="text-transform:capitalize;color:var(--muted)">${p.cat}</td>
+              <td style="color:var(--gold)">${fmtPrice(p.price)}</td>
+              <td><span class="stock-indicator stock-ok"></span>En stock</td>
+              <td>${p.reviews}</td>
+              <td><button class="action-btn" onclick="showToast('Editando ${p.name}')">Editar</button></td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>`
+  }
+  else if(sec === 'orders') {
+    main.innerHTML = `
+      <div class="admin-header">
+        <div class="admin-title">Pedidos</div>
+        <button class="btn-admin-action" onclick="showToast('Filtrando pedidos...')">Filtrar</button>
+      </div>
+      <div class="admin-section">
+        <div class="admin-section-header"><div class="admin-section-title">42 pedidos este mes</div></div>
+        ${renderOrdersTable(true)}
+      </div>`
+  }
+  else if(sec === 'users') {
+    main.innerHTML = `
+      <div class="admin-header"><div class="admin-title">Usuarios</div></div>
+      <div class="admin-section">
+        <div class="admin-section-header"><div class="admin-section-title">341 usuarios registrados</div></div>
+        <table class="admin-table">
+          <thead><tr><th>Nombre</th><th>Correo</th><th>Pedidos</th><th>Total gastado</th><th>Rol</th><th>Desde</th></tr></thead>
+          <tbody>${USERS.map(u => `
+            <tr>
+              <td>${u.name}</td>
+              <td style="color:var(--muted)">${u.email}</td>
+              <td>${u.orders}</td>
+              <td style="color:var(--gold)">${u.spent}</td>
+              <td><span class="status-pill ${u.role==='admin'?'s-prep':'s-pending'}">${u.role}</span></td>
+              <td style="color:var(--muted)">${u.since}</td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>`
+  }
+  else if(sec === 'categories') {
+    const cats = ['vestidos','blazers','faldas','abrigos','blusas']
+    main.innerHTML = `
+      <div class="admin-header">
+        <div class="admin-title">Categorías</div>
+        <button class="btn-admin-action" onclick="showToast('Nueva categoría')">+ Agregar</button>
+      </div>
+      <div class="admin-section">
+        <table class="admin-table">
+          <thead><tr><th>Nombre</th><th>Productos</th><th>Estado</th><th>Acciones</th></tr></thead>
+          <tbody>${cats.map(c => `
+            <tr>
+              <td style="text-transform:capitalize;font-family:'Cormorant Garamond',serif;font-size:18px">${c}</td>
+              <td>${PRODUCTS.filter(p=>p.cat===c).length}</td>
+              <td><span class="status-pill s-prep">Activa</span></td>
+              <td><button class="action-btn" onclick="showToast('Editando categoría')">Editar</button></td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>`
+  }
+}
+
+function renderOrdersTable(full = false) {
+  const list = full ? [...ORDERS, ...ORDERS.slice(0,2)] : ORDERS.slice(0,4)
+  const statusMap = {pendiente:'s-pending',preparando:'s-prep',enviado:'s-sent',entregado:'s-delivered',cancelado:'s-cancelled'}
+  return `<table class="admin-table">
+    <thead><tr><th>Orden</th><th>Cliente</th><th>Ítems</th><th>Total</th><th>Estado</th><th>Fecha</th>${full?'<th>Acciones</th>':''}</tr></thead>
+    <tbody>${list.map(o => `
+      <tr>
+        <td style="color:var(--gold);font-family:'Cormorant Garamond',serif;font-size:16px">${o.num}</td>
+        <td>${o.client}</td>
+        <td style="color:var(--muted)">${o.items} prenda${o.items>1?'s':''}</td>
+        <td>${o.total}</td>
+        <td><span class="status-pill ${statusMap[o.status]}">${o.status}</span></td>
+        <td style="color:var(--muted)">${o.date}</td>
+        ${full?`<td><button class="action-btn" onclick="showToast('Ver detalle ${o.num}')">Ver</button></td>`:''}
+      </tr>`).join('')}
+    </tbody>
+  </table>`
+}
+
+function renderChart() {
+  const el = document.getElementById('chart')
+  if(!el) return
+  const data = [180,240,195,320,280,410,365,290,440,380,520,460,290,380,430,500,380,420,460,510,390,440,380,460,320,480,550,490,380,420]
+  const max = Math.max(...data)
+  const days = ['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29','30']
+  el.innerHTML = data.map((v,i) => `
+    <div class="chart-bar-col">
+      <div class="chart-val" style="font-size:9px">$${(v/10).toFixed(0)}k</div>
+      <div class="chart-bar" style="height:0" data-h="${Math.round((v/max)*120)}px"></div>
+      <div class="chart-label">${days[i]}</div>
+    </div>`).join('')
+  requestAnimationFrame(() => {
+    el.querySelectorAll('.chart-bar').forEach(b => { b.style.height = b.dataset.h })
+  })
+}
+
+// ══════════════ UTILS ══════════════
+function fmtPrice(n) { return '$' + n.toLocaleString('es-CO') }
+
+let toastTimer
+function showToast(msg) {
+  const t = document.getElementById('toast')
+  t.innerHTML = msg
+  t.classList.add('show')
+  clearTimeout(toastTimer)
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3000)
+}
+
+// ══════════════ INIT ══════════════
+renderStore()
+renderLoginForm()
+</script>
+</body>
+</html>
